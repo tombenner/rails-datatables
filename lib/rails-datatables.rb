@@ -1,6 +1,6 @@
 # require 'rails'
 
-class AjaxDatatablesRails
+class RailsDatatables
   
   class MethodError < StandardError; end
 

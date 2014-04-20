@@ -1,1 +1,1 @@
-require 'ajax-datatables-rails'
+require 'rails-datatables'
