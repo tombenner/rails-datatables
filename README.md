@@ -17,44 +17,54 @@ And then execute:
 
 ## Usage
 *The following examples assume that we are setting up rails-datatables for an index of users from a `User` model*
-### Model
+
+### Generate
 Run the following command:
 
-    $ rails generate ajaxdatatable User
+    $ rails generate datatable User
 
-This will generate a file named `users_datatable.rb` in `app/datatables`. Open the file and customize in the functions as directed by the comments
 
-#### Initializer
+This will generate a file named `user_datatable.rb` in `app/datatables`. Open the file and customize in the functions as directed by the comments
+
+### Customize
 ```ruby
-def initialize(view)
-  @model_name = User
-  @columns = # insert array of column names here
-  @searchable_columns = #insert array of columns that will be searched
-  super(view)
+def sortable_columns
+  # list columns inside the Array in string dot notation.
+  # Example: 'users.email'
+  @sortable_columns ||= []
+end
+
+def searchable_columns
+  # list columns inside the Array in string dot notation.
+  # Example: 'users.email'
+  @searchable_columns ||= []
 end
 ```
 
-* For `@columns`, assign an array of the database columns that correspond to the columns in our view table. For example `[users.f_name, users.l_name, users.bio]`. This array is used for sorting by various columns
+* For `sortable_columns`, assign an array of the database columns that correspond to the columns in our view table. For example `[users.f_name, users.l_name, users.bio]`. This array is used for sorting by various columns.
 
-* For `@searchable_columns`, assign an array of the database columns that you want searchable by datatables. For example `[users.f_name, users.l_name]`
+* For `searchable_columns`, assign an array of the database columns that you want searchable by datatables. For example `[users.f_name, users.l_name]`
 
 This gives us:
 ```ruby
-def initialize(view)
-  @model_name = User
-  @columns = [users.f_name, users.l_name, users.bio]
-  @searchable_columns = [users.f_name, users.l_name]
-  super(view)
+def sortable_columns
+  @sortable_columns ||= ['users.f_name', 'users.l_name', 'users.bio']
 end
+
+def searchable_columns
+  @searchable_columns ||= ['users.f_name', 'users.l_name']
+end
+
 ```
 
-#### Data
+### Map data
 ```ruby
 def data
-  users.map do |user|
+  records.map do |record|
     [
-      # comma separated list of the values for each cell of a table row
-    ]
+        # comma separated list of the values for each cell of a table row
+        # example: record.attribute,
+      ]
   end
 end
 ```
@@ -63,11 +73,11 @@ This method builds a 2d array that is used by datatables to construct the html t
 
 ```ruby
 def data
-  users.map do |user|
+  records.map do |record|
     [
-      user.f_name,
-      user.l_name,
-      user.bio
+      record.f_name,
+      record.l_name,
+      record.bio
     ]
   end
 end
@@ -95,7 +105,7 @@ Set up the controller to respond to JSON
 def index
   respond_to do |format|
     format.html
-    format.json { render json: UsersDatatable.new(view_context) }
+    format.json { render json: UserDatatable.new(view_context) }
   end
 end
 ```
@@ -132,6 +142,41 @@ $ ->
     bServerSide: true
     sAjaxSource: $('#users-table').data('source')
 ```
+
+### Additional Notes
+
+A `RailsDatatables::Base` inherited class can accept an options hash at initialization. This provides room for flexibility when required. Example:
+
+```ruby
+class UnrespondedMessagesDatatable < RailsDatatables::Base
+  # customized methods here
+end
+
+datatable = UnrespondedMessagesDatatable.new(
+  view_context, { :foo => { :bar => Baz.new }, :from => 1.month.ago }
+)
+
+datatable.options
+#=> { :foo => { :bar => #<Baz:0x007fe9cb4e0220> }, :from => 2014-04-16 19:55:28 -0700 }
+```
+
+Also, a class that inherits from `RailsDatatables::Base` is not tied to an existing model, module, constant or any type of class in your Rails app. You can pass a name to your datatable class like this:
+
+
+```
+$ rails generate datatable users
+# returns a users_datatable.rb file with a UsersDatatable class
+
+$ rails generate datatable contact_messages
+# returns a contact_messages_datatable.rb file with a ContactMessagesDatatable class
+
+$ rails generate datatable UnrespondedMessages
+# returns an unresponded_messages_datatable.rb file with an UnrespondedMessagesDatatable class
+```
+
+
+In the end, it's up to the developer which model(s), scope(s), relationship(s) (or else) to employ inside the datatable class to retrieve records from the database.
+
 
 ## Contributing
 
