@@ -145,6 +145,8 @@ $ ->
 
 ### Additional Notes
 
+#### Options
+
 A `RailsDatatables::Base` inherited class can accept an options hash at initialization. This provides room for flexibility when required. Example:
 
 ```ruby
@@ -159,6 +161,8 @@ datatable = UnrespondedMessagesDatatable.new(
 datatable.options
 #=> { :foo => { :bar => #<Baz:0x007fe9cb4e0220> }, :from => 2014-04-16 19:55:28 -0700 }
 ```
+
+#### Generator Syntax
 
 Also, a class that inherits from `RailsDatatables::Base` is not tied to an existing model, module, constant or any type of class in your Rails app. You can pass a name to your datatable class like this:
 
