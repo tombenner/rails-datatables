@@ -4,6 +4,10 @@ Datatables is a nifty jquery plugin that adds the ability to paginate, sort, and
 
 `rails-datatables` is a wrapper around datatable's ajax methods that allow synchronization with server-side pagination in a rails app. It was inspired by this [railscast](http://railscasts.com/episodes/340-datatables). I needed to implement a similar solution in a couple projects I was working on so I extracted it out into a gem.
 
+## ORM Support
+
+Currently, it only supports `ActiveRecord` as ORM for performing database queries.
+
 ## Installation
 
 Add these lines to your application's Gemfile:
@@ -28,6 +32,12 @@ This will generate a file named `user_datatable.rb` in `app/datatables`. Open th
 
 ### Customize
 ```ruby
+# uncomment the appropriate paginator module,
+# depending on gems available in your project.
+# include RailsDatatables::Extensions::Kaminari
+# include RailsDatatables::Extensions::WillPaginate
+# include RailsDatatables::Extensions::SimplePaginator
+
 def sortable_columns
   # list columns inside the Array in string dot notation.
   # Example: 'users.email'
@@ -41,12 +51,18 @@ def searchable_columns
 end
 ```
 
+* For `extensions`, just uncomment the paginator you would like to use, given
+the gems bundled in your project. For example, if your models are using `Kaminari`, uncomment `RailsDatatables::Extensions::Kaminari`. You may remove all commented lines.
+  * `SimplePaginator` falls back to passing `offset` and `limit` at the database level (through `ActiveRecord` of course).
+
 * For `sortable_columns`, assign an array of the database columns that correspond to the columns in our view table. For example `[users.f_name, users.l_name, users.bio]`. This array is used for sorting by various columns.
 
 * For `searchable_columns`, assign an array of the database columns that you want searchable by datatables. For example `[users.f_name, users.l_name]`
 
 This gives us:
 ```ruby
+include RailsDatatables::Extensions::Kaminari
+
 def sortable_columns
   @sortable_columns ||= ['users.f_name', 'users.l_name', 'users.bio']
 end

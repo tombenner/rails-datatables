@@ -61,7 +61,10 @@ module RailsDatatables
     end
 
     def paginate_records(records)
-      records.offset(offset).limit(per_page)
+      fail(
+        MethodNotImplementedError,
+        'Please mixin a pagination extension.'
+      )
     end
 
     def filter_records(records)

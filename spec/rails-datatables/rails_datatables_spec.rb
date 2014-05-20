@@ -111,11 +111,10 @@ describe RailsDatatables::Base do
     let(:datatable) { RailsDatatables::Base.new(view) }
 
     describe '#paginate_records' do
-      it 'calls #offset and #limit on a collection' do
-        results.stub_chain(:offset, :limit) { [] }
-        results.should_receive(:offset)
-        results.offset.should_receive(:limit)
-        datatable.send(:paginate_records, results)
+      it 'raises a MethodNotImplementedError' do
+        expect { datatable.send(:paginate_records, []) }.to raise_error(
+          RailsDatatables::Base::MethodNotImplementedError
+        )
       end
     end
 

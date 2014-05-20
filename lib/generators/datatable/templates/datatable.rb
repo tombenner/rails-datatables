@@ -1,4 +1,9 @@
 class <%= @datatable_name %>Datatable < RailsDatatables::Base
+  # uncomment the appropriate paginator module,
+  # depending on gems available in your project.
+  # include RailsDatatables::Extensions::Kaminari
+  # include RailsDatatables::Extensions::WillPaginate
+  # include RailsDatatables::Extensions::SimplePaginator
 
   def sortable_columns
     # list columns inside the Array in string dot notation.
